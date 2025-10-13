@@ -1,0 +1,12 @@
+{% extends 'movies/base.html' %}
+
+{% block content %}
+
+<form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-dark" type="submit">Login</button>
+</form>
+
+
+{% endblock %}

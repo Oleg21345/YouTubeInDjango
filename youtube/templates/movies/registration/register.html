@@ -1,0 +1,14 @@
+{% extends 'movies/base.html' %}
+
+{% block content %}
+
+<form method="post" action="">
+
+    {% csrf_token %}
+    {% include 'components/messages/form_error.html' %}
+    {{ form.as_p }}
+    <button class="btn btn-dark" type="submit">Login</button>
+</form>
+
+
+{% endblock %}
