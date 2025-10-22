@@ -1,0 +1,53 @@
+.video-player {
+  position: relative;
+  background: #000;
+  aspect-ratio: 16/9;
+}
+
+.video-player video {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: white;
+  font-size: 14px;
+}
+
+.controls input[type="range"] {
+  flex: 1;
+  cursor: pointer;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.control-btn:hover {
+  color: #ff3c00;
+}
+
+.left, .right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-menu li:hover {
+  background: #444;
+}
