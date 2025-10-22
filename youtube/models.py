@@ -35,7 +35,11 @@ class Video(models.Model):
     like = models.IntegerField(default=0)
     dislike = models.IntegerField(default=0)
     url_photo = models.URLField(max_length=500)
-    url_video = models.URLField(max_length=500)
+    url_video = models.URLField()
+    url_video_240 = models.URLField(blank=True, null=True)
+    url_video_360 = models.URLField(blank=True, null=True)
+    url_video_720 = models.URLField(blank=True, null=True)
+    url_video_1080 = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.title

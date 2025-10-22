@@ -1,10 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'movies/base.html' %}
+{% load static %}
+
+{% block sidebar_class %}d-none{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'video/video_detail.css' %}">
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="video-player rounded shadow-sm overflow-hidden mb-3">
+       <video id="custom-video"
+       src="{% url 'stream_video' video.slug %}"
+       preload="metadata"
+       playsinline
+       controlslist="nodownload nofullscreen noremoteplayback"
+       disablepictureinpicture></video>
+      </video>
+
+        <div class="controls">
+          <div class="left">
+            <button id="play-pause" class="control-btn">▶</button>
+            <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+          </div>
+
+          <input type="range" id="progress" value="0" step="0.1">
+
+          <div class="right">
+            <button id="mute" class="control-btn">🔊</button>
+            <input type="range" id="volume" min="0" max="1" step="0.05" value="1">
+
+            <div class="settings-wrapper" style="position:relative;">
+              <button id="settings-btn" class="control-btn">⚙️</button>
+              <ul id="quality-options" class="settings-menu" style="display:none; position:absolute; bottom:30px; right:0; background:#222; list-style:none; padding:5px 0; margin:0; border-radius:5px; min-width:80px; z-index:50;">
+                <li data-src="{{ video.url_video }}" class="active" style="padding:5px 10px; cursor:pointer; color:white;">Auto</li>
+                {% if video.url_video_1080 %}<li data-src="{{ video.url_video_1080 }}" style="padding:5px 10px; cursor:pointer; color:white;">1080p</li>{% endif %}
+                {% if video.url_video_720 %}<li data-src="{{ video.url_video_720 }}" style="padding:5px 10px; cursor:pointer; color:white;">720p</li>{% endif %}
+                {% if video.url_video_480 %}<li data-src="{{ video.url_video_480 }}" style="padding:5px 10px; cursor:pointer; color:white;">480p</li>{% endif %}
+                {% if video.url_video_360 %}<li data-src="{{ video.url_video_360 }}" style="padding:5px 10px; cursor:pointer; color:white;">360p</li>{% endif %}
+              </ul>
+            </div>
+
+            <button id="fullscreen" class="control-btn">⛶</button>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="fw-bold mb-2">{{ video.title }}</h3>
+
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <p class="mb-0 text-muted small">
+            {{ video.autor.username }} • {{ video.create_at|date:"F j, Y" }}
+          </p>
+          <p class="mb-0 text-muted small">
+            {{ video.watch }} views • 👍 {{ video.like }} | 👎 {{ video.dislike }}
+          </p>
+        </div>
+        <div>
+          <button class="btn btn-danger btn-sm px-3">Subscribe</button>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="mb-4">
+        <h6 class="fw-semibold">Description</h6>
+        <p class="text-light bg-dark p-3 rounded">{{ video.desc }}</p>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <h5 class="fw-semibold mb-3">Similar videos</h5>
+      {% for related in related_videos %}
+      <div class="d-flex mb-3 align-items-start">
+        <a href="{% url 'video_detail' related.slug %}" class="me-2">
+          <img src="{{ related.url_photo }}" alt="{{ related.title }}" class="rounded"
+               style="width: 160px; height: 90px; object-fit: cover;">
+        </a>
+        <div>
+          <a href="{% url 'video_detail' related.slug %}"
+             class="text-white fw-semibold d-block text-decoration-none" style="font-size: 0.9rem;">
+            {{ related.title }}
+          </a>
+          <p class="text-muted small mb-0">{{ related.autor.username }}</p>
+          <p class="text-muted small">{{ related.watch }} views</p>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted">There are no similar videos.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/video_detail.js' %}"></script>
+
+{% endblock %}

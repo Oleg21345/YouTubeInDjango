@@ -1,17 +1,23 @@
 {% extends 'movies/base.html' %}
 
 {% block content %}
-
-    <div class="row">
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Card 1</h5>
-            <p class="card-text">Description to product.</p>
-            <a href="#" class="btn btn-primary">Detail</a>
-          </div>
+<div class="row">
+  {% for video in videos %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <!-- Виводимо картинку через url_photo -->
+        <a href="{% url 'video_detail' video.slug %}">
+        <img src="{{ video.url_photo }}" class="card-img-top" alt="{{ video.title }}">
+          </a>
+        <div class="card-body">
+          <h5 class="card-title">{{ video.title }}</h5>
+          <p class="card-text">{{ video.desc }}</p>
         </div>
       </div>
-     </div>
-
+    </div>
+  {% empty %}
+    <p>Немає відео для відображення</p>
+  {% endfor %}
+</div>
 {% endblock %}
+
