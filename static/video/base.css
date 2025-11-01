@@ -2,10 +2,9 @@
       background-color: #fff;
       color: #212529;
       font-family: "Roboto", sans-serif;
-      padding-top: 65px; /* offset for fixed navbar */
+      padding-top: 65px;
     }
 
-    /* Top navigation bar */
     .navbar {
       background-color: #fff;
       border-bottom: 1px solid #ddd;
@@ -29,7 +28,6 @@
       border-radius: 8px;
     }
 
-    /* Sidebar */
     .sidebar {
       width: 230px;
       border-right: 1px solid #e6e6e6;
@@ -62,7 +60,6 @@
       background-color: #f2f2f2;
     }
 
-    /* Main content */
     main {
       margin-left: 230px;
       padding: 2rem;

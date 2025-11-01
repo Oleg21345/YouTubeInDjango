@@ -1,0 +1,35 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <h2 class="mb-4">🔗 Share this video</h2>
+
+    <div class="card mx-auto shadow-sm p-4" style="max-width: 500px; border-radius: 15px;">
+        <p class="mb-3" style="word-wrap: break-word;">
+            <a href="{{ video_url }}" target="_blank" class="text-decoration-none text-primary fw-semibold">
+                {{ video_url }}
+            </a>
+        </p>
+
+        <button id="copyBtn" class="btn btn-outline-primary w-100">
+            <i class="bi bi-clipboard"></i> Copy link
+        </button>
+    </div>
+</div>
+
+<script>
+document.getElementById('copyBtn').addEventListener('click', async () => {
+    const link = "{{ video_url }}";
+    try {
+        await navigator.clipboard.writeText(link);
+        const btn = document.getElementById('copyBtn');
+        btn.innerHTML = "✅ Copied!";
+        setTimeout(() => btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy link', 2000);
+    } catch (err) {
+        alert("❌ Failed to copy the link.");
+    }
+});
+</script>
+{% endblock %}
+

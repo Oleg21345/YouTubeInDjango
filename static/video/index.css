@@ -1,0 +1,18 @@
+.video-menu-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  color: #000;
+  font-size: 22px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.video-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  opacity: 0.8;
+}

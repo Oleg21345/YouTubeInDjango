@@ -49,7 +49,7 @@ def register(request):
 @receiver(post_save, sender=User)
 def create_autor(sender, instance, created, **kwargs):
     if created:
-        Autor.objects.create(user=instance, nickname=instance.username)
+        Autor.objects.create(user=instance, nickname=instance.username, pseudonym=f"@{instance.username}")
 
 
 

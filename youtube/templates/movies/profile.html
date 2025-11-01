@@ -1,0 +1,74 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+{% block title %}{{ autor.user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'video/profile.css' %}">
+
+<div class="channel-header">
+    <div class="channel-avatar">{{ autor.user.username|first|upper }}</div>
+    <div class="channel-name">{{ autor.user.username }}</div>
+    <div class="channel-handle">@{{ autor.user.username|lower }}</div>
+
+    {% if request.user == autor.user %}
+    <div class="channel-buttons mt-3">
+        <a href="{% url 'profile_settings' autor.slug %}" class="btn">Customize Channel</a>
+        <a href="#" class="btn">Manage Videos</a>
+    </div>
+    {% endif %}
+</div>
+
+{% if videos_count == 0 %}
+<div class="tabs">
+    <a href="#" class="tab active">Playlists</a>
+    <a href="#" class="tab">Videos</a>
+</div>
+{% else %}
+<div class="tabs">
+    <a href="#" class="tab active">Main</a>
+    <a href="#" class="tab">Videos</a>
+    <a href="#" class="tab">Playlists</a>
+    <a href="#" class="tab">Recordings</a>
+    <a href="#" class="tab search-tab">
+        <i class="bi bi-search"></i>
+    </a>
+</div>
+{% endif %}
+
+{% if videos_count == 0 %}
+<div class="playlists-section">
+    <h5>All Playlists</h5>
+    <div class="playlist-scroll d-flex overflow-auto py-2">
+        <div class="playlist-card me-3" style="flex: 0 0 320px; border-radius: 10px; box-shadow: 0 0 6px rgba(0,0,0,0.1); cursor: pointer;">
+            <div class="playlist-thumbnail" style="height: 180px; display: flex; align-items: center; justify-content: center; background-color: #ddd; font-size: 48px; color: #888;">
+                <i class="bi bi-play-btn-fill"></i>
+            </div>
+            <div class="playlist-info" style="padding: 10px;">
+                <h6 style="font-size: 20px; margin: 4px 0 6px 0;">Hot</h6>
+                <p style="font-size: 16px; margin: 0; color: #606060;">33 videos</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+  {% for video in videos %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <a href="{% url 'video_detail' video.slug %}">
+          <img src="{{ video.url_photo }}" class="card-img-top" alt="{{ video.title }}">
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{ video.title }}</h5>
+          <p class="card-text">{{ video.desc }}</p>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
+
+
+

@@ -45,12 +45,21 @@ class VideoCreateForm(forms.ModelForm):
         }
 
 
+class VideoUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Video
+        fields = ["title", "desc", "is_published"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Put title to your video"}),
+            "desc": forms.Textarea(attrs={"class": "form-control", "placeholder": "Put description to your video"}),
+        }
 
 
+class UpdateOnlyPhoto(forms.ModelForm):
+    photo = forms.ImageField()
 
 
-   #  title = models.CharField(max_length=150)
-   #  desc = models.CharField(max_length=600)
-   #  is_published = models.BooleanField(default=False)
-   #  url_photo = models.URLField(max_length=500)
-   #  url_movie = models.URLField(max_length=500)
+    class Meta:
+        model = Video
+        fields = ["photo"]

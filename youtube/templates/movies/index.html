@@ -1,23 +1,71 @@
 {% extends 'movies/base.html' %}
+{% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'video/index.css' %}">
+
 <div class="row">
-  {% for video in videos %}
+    {% for video in videos %}
     <div class="col-md-4 mb-4">
-      <div class="card h-100 shadow-sm">
-        <!-- Виводимо картинку через url_photo -->
-        <a href="{% url 'video_detail' video.slug %}">
-        <img src="{{ video.url_photo }}" class="card-img-top" alt="{{ video.title }}">
-          </a>
-        <div class="card-body">
-          <h5 class="card-title">{{ video.title }}</h5>
-          <p class="card-text">{{ video.desc }}</p>
+        <div class="card h-100 shadow-sm position-relative">
+            <a href="{% url 'video_detail' video.slug %}">
+                <img src="{{ video.url_photo }}" class="card-img-top" alt="{{ video.title }}">
+            </a>
+            <div class="card-body">
+                <h5 class="card-title">{{ video.title }}</h5>
+                <p class="card-text">{{ video.desc }}</p>
+            </div>
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle video-menu-btn" href="#" role="button"
+                   id="videoMenu-{{ video.slug }}"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <span style="font-size: 1.2rem;">⋮</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="videoMenu-{{ video.slug }}"
+                    style="min-width: 200px;">
+                    <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-list-ul me-2"></i> Add to queue</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center" href="{% url 'watch_later' video.slug %}"><i class="bi bi-clock me-2"></i> Watch later</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-music-note-list me-2"></i> Add to playlist</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-download me-2"></i> Download</a></li>
+
+                    <!-- Кнопка Share -->
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center share-btn"
+                           href="#"
+                           data-url="{{ request.build_absolute_uri|slice:':-1' }}{% url 'video_detail' video.slug %}">
+                            <i class="bi bi-share me-2"></i> Share
+                        </a>
+                    </li>
+
+                    <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-x-circle me-2"></i> Not interested</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-hand-thumbs-down me-2"></i> Do not recommend</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-flag me-2"></i> Complain</a></li>
+                </ul>
+            </div>
         </div>
+    </div>
+    {% empty %}
+    <p>Empty</p>
+    {% endfor %}
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalLabel">🔗 Share this video</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="shareLink" class="text-break mb-3"></p>
+        <button id="copyBtn" class="btn btn-outline-primary w-100">
+          <i class="bi bi-clipboard"></i> Copy link
+        </button>
       </div>
     </div>
-  {% empty %}
-    <p>Немає відео для відображення</p>
-  {% endfor %}
+  </div>
 </div>
-{% endblock %}
 
+<script src="{% static 'js/share_video.js' %}"></script>
+
+{% endblock %}

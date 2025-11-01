@@ -38,3 +38,21 @@ def main(front_end_file):
     )
     return s3_client.upload_files(front_end_file)
 
+
+def delete_s3_file(file_url):
+    s3_client = boto3.client(
+        access_key=os.getenv("AWS_ACCESS_KEY_ID"),
+        secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("AWS_LOCATION")
+    )
+    bucket_name = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    key = file_url.split(f"{bucket_name}/")[-1] if bucket_name in file_url else file_url.split(".com/")[-1]
+
+    try:
+        s3_client.delete_object(Bucket=bucket_name, Key=key)
+        print(f"✅ Deleted from S3: {key}")
+    except Exception as e:
+        print(f"⚠️ Error deleting from S3: {e}")
+
+
+

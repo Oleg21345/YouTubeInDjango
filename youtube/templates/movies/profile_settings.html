@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Studio — Channel settings</title>
+<style>
+  :root{
+    --accent:#111;
+    --muted:#6b6b6b;
+    --soft:#f6f6f6;
+    --card:#ffffff;
+    --border:#e6e6e6;
+    --primary:#1f2937;
+  }
+
+  html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:var(--accent); background: #fff;}
+  a{color:inherit; text-decoration:none;}
+  /* layout */
+  .app{
+    display:flex;
+    min-height:100vh;
+  }
+
+  /* left sidebar */
+  .sidebar{
+    width:260px;
+    border-right:1px solid var(--border);
+    padding:20px 12px;
+    box-sizing:border-box;
+    background:#fff;
+  }
+  .logo{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .logo .brand{
+    width:44px; height:44px; border-radius:8px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--primary);
+  }
+  .logo .title{font-weight:600; font-size:16px; color:var(--primary);}
+
+  .nav{
+    margin-top:8px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .nav a{
+    display:flex; gap:10px; align-items:center; padding:10px 8px; border-radius:8px; color:var(--primary);
+  }
+  .nav a:hover{background:var(--soft);}
+  .nav .small{font-size:13px; color:var(--muted); margin-top:10px; padding-left:8px;}
+
+  /* main area */
+  .main{
+    flex:1; display:flex; flex-direction:column;
+  }
+
+  /* topbar */
+  .topbar{
+    height:64px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; padding:0 20px; box-sizing:border-box; background:#fff;
+  }
+  .search{
+    flex:1; max-width:760px; margin:auto; display:flex; align-items:center; gap:8px;
+  }
+  .search input{
+    width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:20px; font-size:14px;
+  }
+  .top-actions{display:flex; gap:10px; align-items:center; margin-left:auto;}
+  .btn{
+    padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:14px;
+  }
+  .btn.primary{background:#111; color:#fff; border-color:#111;}
+  .avatar-circle{width:36px; height:36px; border-radius:50%; background:#2563eb; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:600;}
+
+  /* content area */
+  .content{
+    padding:22px 28px; max-width:1200px; width:100%; box-sizing:border-box;
+  }
+
+  .page-header{
+    display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
+  }
+  .page-title{font-size:20px; font-weight:700;}
+  .header-actions{display:flex; gap:8px; align-items:center;}
+
+  /* card styles */
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:8px; padding:18px; box-sizing:border-box; margin-bottom:16px;
+  }
+
+  /* banner area */
+  .banner-wrap{display:flex; gap:20px; flex-direction:column;}
+  .banner-preview{
+    height:160px; border-radius:6px; background:linear-gradient(180deg,#f3f4f6,#e9eefb); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px; border:1px dashed var(--border);
+  }
+  .banner-info{color:var(--muted); font-size:13px; margin-top:10px;}
+
+  /* profile block */
+  .profile-block{display:flex; gap:18px; align-items:center;}
+  .profile-avatar{
+    width:98px; height:98px; border-radius:50%; background:#0ea5e9; color:#fff; display:flex; align-items:center; justify-content:center; font-size:42px; font-weight:700;
+  }
+  .profile-meta{flex:1;}
+  .profile-meta h2{margin:0; font-size:22px;}
+  .profile-meta .handle{color:var(--muted); margin-top:6px; font-size:14px;}
+  .profile-buttons{display:flex; gap:10px; margin-top:12px;}
+  .profile-buttons .btn{padding:8px 14px; border-radius:20px; font-size:14px;}
+
+  /* tabs */
+  .tabs{display:flex; gap:6px; margin-top:18px; border-bottom:1px solid var(--border); padding-bottom:10px;}
+  .tabs button{background:none; border:none; padding:10px 14px; cursor:pointer; font-weight:600; color:var(--muted); border-radius:6px;}
+  .tabs button.active{color:var(--primary); border-bottom:3px solid var(--primary);}
+
+  /* playlists scroll */
+  .playlist-scroll{display:flex; gap:12px; margin-top:14px; overflow:auto; padding-bottom:8px;}
+  .playlist-card{
+    min-width:320px; border-radius:10px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06); background:#fff; border:1px solid var(--border);
+  }
+  .playlist-thumb{height:180px; background:#efefef; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:44px;}
+  .playlist-info{padding:12px;}
+  .playlist-info h6{margin:0; font-size:18px;}
+  .playlist-info p{margin:6px 0 0 0; color:var(--muted);}
+
+  /* responsive */
+  @media (max-width:980px){
+    .sidebar{display:none;}
+    .playlist-card{min-width:260px;}
+    .content{padding:16px;}
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="logo">
+        <div class="brand">YS</div>
+        <div>
+          <div class="title">YouStudio</div>
+
+          <div style="font-size:12px;color:var(--muted)">Your channel</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Sidebar">
+        <a href="#"><span>🏠</span><span>Home</span></a>
+        <a href="#"><span>🎬</span><span>Content</span></a>
+        <a href="#"><span>📊</span><span>Analytics</span></a>
+        <a href="#"><span>👥</span><span>Community</span></a>
+        <a href="#"><span>⚙️</span><span>Settings</span></a>
+        <div class="small">More</div>
+        <a href="#"><span>❓</span><span>Help</span></a>
+      </nav>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div style="width:46px;"></div>
+        <div class="search" role="search">
+          <input placeholder="Search on channel" aria-label="Search" />
+        </div>
+        <div class="top-actions">
+          <a href="{% url 'home' %}"><span>🏠</span><span>Main</span></a>
+
+          <button class="btn" title="Go to channel">Go to channel</button>
+          <button class="btn">Cancel</button>
+          <button class="btn primary">Publish</button>
+          <div class="avatar-circle" title="Account">D</div>
+        </div>
+      </header>
+
+      <main class="content" role="main">
+        <div class="page-header">
+          <div class="page-title">Channel settings</div>
+          <div class="header-actions">
+            <button class="btn">Discard</button>
+            <button class="btn primary">Save & publish</button>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="banner-wrap">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:320px;">
+                <div style="font-weight:600; margin-bottom:8px;">Banner</div>
+                <div class="banner-preview">Banner preview — appearance at top of channel</div>
+                <div class="banner-info">Recommended image size: 2048 x 1152 px. File size up to 6 MB.</div>
+              </div>
+              <div style="width:220px; min-width:200px;">
+                <div style="font-weight:600; margin-bottom:8px;">Profile photo</div>
+                <div style="width:120px; height:120px; border-radius:8px; overflow:hidden; background:#e6f2ff; display:flex; align-items:center; justify-content:center; font-size:40px; color:#0369a1;">D</div>
+                <div class="banner-info" style="margin-top:10px;">Recommended size: 98 x 98 px. PNG or GIF (up to 4 MB).</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
