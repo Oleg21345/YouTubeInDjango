@@ -33,7 +33,8 @@ urlpatterns = [
     path('share_video/<slug:video_slug>/', share_link, name="share_link"),
     path("add_play_list/<slug:video_slug>/", add_play_list, name="add_play_list"),
     path("delete_video_playlist/<slug:play_list_slug>/<slug:video_slug>/", delete_from_play_list, name="delete_from_play_list"),
-
+    path("add_from_play_list/<slug:play_list_slug>/<slug:video_slug>/", add_from_play_list,
+         name="add_from_play_list"),
 
 ]
 

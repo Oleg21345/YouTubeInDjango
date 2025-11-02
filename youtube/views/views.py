@@ -221,3 +221,12 @@ def delete_from_play_list(request, play_list_slug, video_slug):
     messages.success(request, f"Video '{video.title}' removed from playlist {playlist.name}")
 
     return redirect("home")
+
+def add_from_play_list(request, play_list_slug, video_slug):
+    playlist = get_object_or_404(PlayList, slug=play_list_slug)
+    video = get_object_or_404(Video, slug=video_slug)
+
+    playlist.videos.add(video)
+    messages.success(request, f"Video '{video.title}' removed from playlist {playlist.name}")
+
+    return redirect("home")

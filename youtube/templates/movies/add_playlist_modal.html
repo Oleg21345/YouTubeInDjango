@@ -8,11 +8,13 @@
         {% if video in pl.videos.all %}
         <a href="{% url 'delete_from_play_list' pl.slug video.slug %}"
            class="btn btn-sm btn-outline-danger remove-video-link">
-           Remove
+            Remove
         </a>
         {% else %}
-        <span class="badge bg-secondary">Not added</span>
-        {% endif %}
+        <a href="{% url 'add_from_play_list' pl.slug video.slug %}"
+           class="btn btn-sm btn-outline-success add-video-link">
+            Add
+        </a> {% endif %}
     </li>
     {% endfor %}
 </ul>
