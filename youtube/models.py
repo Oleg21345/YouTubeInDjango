@@ -54,6 +54,20 @@ class Video(models.Model):
         return self.votes.filter(value=-1).count()
 
 
+class PlayList(models.Model):
+    ACCESS_CHOICES = (
+        (1, "Public"),
+        (2, "Unlisted"),
+        (3, "Private"),
+    )
+
+    slug = models.SlugField(default=str(uuid.uuid4())[:8])
+    name = models.CharField(max_length=150,)
+    access = models.IntegerField(choices=ACCESS_CHOICES, default=3)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    videos = models.ManyToManyField(Video,null=True, blank=True, related_name="playlist")
+
+
 
 class Vote(models.Model):
     VOTE_CHOICE = (
@@ -101,6 +115,6 @@ class LikesVideo(models.Model):
     added_at = models.DateTimeField(auto_now_add=True, verbose_name="Data")
 
     def __str__(self):
-        return self.count_likes
+        return str(self.count_likes)
 
 

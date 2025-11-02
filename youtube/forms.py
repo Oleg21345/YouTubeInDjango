@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from youtube.models import Video
+from youtube.models import Video, PlayList
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Username",
@@ -59,7 +59,26 @@ class VideoUpdateForm(forms.ModelForm):
 class UpdateOnlyPhoto(forms.ModelForm):
     photo = forms.ImageField()
 
-
     class Meta:
         model = Video
         fields = ["photo"]
+
+class PlayListForm(forms.ModelForm):
+    access = forms.ChoiceField(
+        choices=PlayList.ACCESS_CHOICES,
+        label="Playlist Access",
+        help_text="Public — visible to everyone, Unlisted — accessible via link, Private — only you can see",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    name = forms.CharField(
+        max_length=150,
+        label="Playlist Name",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        help_text="Enter a name for your playlist"
+    )
+
+    class Meta:
+        model = PlayList
+        fields = ["name", "access"]
+

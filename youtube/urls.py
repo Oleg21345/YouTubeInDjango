@@ -1,5 +1,6 @@
 from django.urls import path
 from youtube.views.views import *
+from youtube.views.profile_view import *
 from youtube.views.registration_view import *
 from youtube.s3.decode_file import stream_video
 from youtube.views.dislike_like_views import like_video, dislike_video, post_vote
@@ -30,6 +31,8 @@ urlpatterns = [
     path('notificated/', notificated_view, name='notificated'),
     path('watch_later/<slug:video_slug>/', toggle_watch_later, name="watch_later"),
     path('share_video/<slug:video_slug>/', share_link, name="share_link"),
+    path("add_play_list/<slug:video_slug>/", add_play_list, name="add_play_list"),
+    path("delete_video_playlist/<slug:play_list_slug>/<slug:video_slug>/", delete_from_play_list, name="delete_from_play_list"),
 
 
 ]

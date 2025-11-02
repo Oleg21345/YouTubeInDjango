@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.db.models import F
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from youtube.models import Video, Autor, WatchLater, LikesVideo
-from youtube.forms import VideoCreateForm, VideoUpdateForm,UpdateOnlyPhoto
+from youtube.models import Video, WatchLater, LikesVideo, PlayList
+from youtube.forms import VideoCreateForm, VideoUpdateForm,UpdateOnlyPhoto, PlayListForm
 from youtube.s3.s3_views import main, delete_s3_file
 from youtube.s3.data_compresor import compress_photo, compresor_video_in_memory, compress_existing_videos,ffmpeg_url
 from youtube.s3.validate_photo import validate_image_size
@@ -87,28 +87,6 @@ class EditPhoto(UpdateView):
 
 
 
-class Profile(DetailView):
-    model = Autor
-    context_object_name = "autor"
-    template_name = "movies/profile.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        slug = self.kwargs["slug"]
-        print(f"DEBUG slug {slug}")
-        video = Video.objects.filter(autor__autor__slug=slug)
-        print(f"DEBUG video {video}")
-        context["videos"] = video
-        context["videos_count"] = context["videos"].count()
-
-        return context
-
-class ProfileSettings(DetailView):
-    model = Autor
-    context_object_name = "autor_settings"
-    template_name = "movies/profile_settings.html"
-
-
 class WatchLaterList(ListView):
     model = WatchLater
     context_object_name = "videos"
@@ -118,6 +96,7 @@ class LikeVideoList(ListView):
     model = LikesVideo
     context_object_name = "videos"
     template_name = "movies/likes_video.html"
+
 
 
 def create_video(request):
@@ -208,3 +187,37 @@ def share_link(request, video_slug):
         "video_url": video_url,
     }
     return render(request,"movies/index.html", context)
+from django.http import JsonResponse
+
+def add_play_list(request, video_slug):
+    video = get_object_or_404(Video, slug=video_slug)
+
+    if request.method == "POST":
+        form = PlayListForm(request.POST)
+        if form.is_valid():
+            playlist = form.save(commit=False)
+            playlist.user = request.user
+            playlist.save()
+            playlist.videos.add(video)
+
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"success": True, "message": "Playlist created successfully!"})
+
+            return redirect("home")
+        else:
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                html = render(request, "movies/add_playlist_modal.html", {"form": form, "video": video}).content.decode("utf-8")
+                return JsonResponse({"success": False, "form_html": html})
+    else:
+        form = PlayListForm()
+
+    return render(request, "movies/add_playlist_modal.html", {"form": form, "video": video})
+
+def delete_from_play_list(request, play_list_slug, video_slug):
+    playlist = get_object_or_404(PlayList, slug=play_list_slug)
+    video = get_object_or_404(Video, slug=video_slug)
+
+    playlist.videos.remove(video)
+    messages.success(request, f"Video '{video.title}' removed from playlist {playlist.name}")
+
+    return redirect("home")
