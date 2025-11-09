@@ -1,0 +1,32 @@
+<div class="modal fade" id="playlistModal" tabindex="-1" aria-labelledby="playlistModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="playlistModalLabel">🎵 Add to Playlist</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="playlistModalBody">
+        <div class="text-center text-muted py-3">
+          <div class="spinner-border text-primary" role="status" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalLabel">🔗 Share this video</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="shareLink" class="text-break mb-3"></p>
+        <button id="copyBtn" class="btn btn-outline-primary w-100">
+          <i class="bi bi-clipboard"></i> Copy link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

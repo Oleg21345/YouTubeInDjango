@@ -31,8 +31,9 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNav">
-            <form class="d-flex mx-auto" role="search" style="max-width: 500px;">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form action="{% url 'search' %}" method="get" class="d-flex mx-auto" role="search"
+                  style="max-width: 500px;">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-secondary" type="submit">🔍</button>
             </form>
 
@@ -100,7 +101,10 @@
     </a>
 
     <a href="#"><i class="bi bi-lightning-charge-fill"></i> Shorts</a>
-    <a href="#"><i class="bi bi-collection-play-fill"></i> Subscriptions</a>
+    <a href="{% url 'subs' autor.slug %}" class="text-decoration-none text-dark d-flex align-items-center">
+        <i class="bi bi-people-fill me-2"></i> Subscribers
+    </a>
+
     <a href="#"><i class="bi bi-play-circle-fill"></i> Library</a>
     <a href="#"><i class="bi bi-clock-history"></i> History</a>
 </div>

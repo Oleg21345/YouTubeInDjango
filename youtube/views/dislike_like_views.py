@@ -1,6 +1,5 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from youtube.models import Video, Vote, LikesVideo
+from django.shortcuts import redirect, get_object_or_404
+from youtube.models import Video, Vote, LikesVideo, CommentsVideo, VoteForComment, LikesComment
 from youtube.notification_system import add_notification
 
 def like_video(request, slug):
@@ -69,3 +68,98 @@ def post_vote(request, slug, value):
 
     return redirect("video_detail", slug=slug)
 
+
+
+
+
+
+def comment_vote(request, comment_id, value):
+    user = request.user
+    comment = get_object_or_404(CommentsVideo, id=comment_id)
+
+    if value not in ["1", "-1"]:
+        return redirect("video_detail", slug=comment.video.slug)
+
+    value = int(value)
+
+    vote, created = VoteForComment.objects.get_or_create(
+        user=user, comment=comment, defaults={"value": value}
+    )
+
+    if not created and vote.value == value:
+        vote.delete()
+    else:
+        vote.value = value
+        vote.save()
+
+    existing_like = LikesComment.objects.filter(user=user, comment=comment)
+    if value == 1:
+        if existing_like.exists():
+            existing_like.delete()
+        else:
+            LikesComment.objects.create(user=user, comment=comment)
+    else:
+        existing_like.delete()
+
+    if comment.user != user:
+        action = "liked" if value == 1 else "disliked"
+        add_notification(
+            user=comment.user,
+            from_user=user,
+            message=f"{action} your comment.",
+            not_count=1
+        )
+
+    return redirect("video_detail", slug=comment.video.slug)
+
+
+
+def comment_like(request, comment_id):
+    user = request.user
+    comment = get_object_or_404(CommentsVideo, id=comment_id)
+
+    vote, created = VoteForComment.objects.get_or_create(user=user, comment=comment)
+    if vote.value == 1:
+        vote.delete()
+    else:
+        vote.value = 1
+        vote.save()
+
+    like_obj, created_like = LikesComment.objects.get_or_create(user=user, comment=comment)
+    if not created_like:
+        like_obj.delete()
+
+    if comment.user != user:
+        add_notification(
+            user=comment.user,
+            from_user=user,
+            message="liked your comment.",
+            not_count=1
+        )
+
+    return redirect("video_detail", slug=comment.video.slug)
+
+
+
+def comment_dislike(request, comment_id):
+    user = request.user
+    comment = get_object_or_404(CommentsVideo, id=comment_id)
+
+    vote, created = VoteForComment.objects.get_or_create(user=user, comment=comment)
+    if vote.value == -1:
+        vote.delete()
+    else:
+        vote.value = -1
+        vote.save()
+
+    LikesComment.objects.filter(user=user, comment=comment).delete()
+
+    if comment.user != user:
+        add_notification(
+            user=comment.user,
+            from_user=user,
+            message="disliked your comment.",
+            not_count=1
+        )
+
+    return redirect("video_detail", slug=comment.video.slug)

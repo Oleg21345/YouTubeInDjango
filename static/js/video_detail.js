@@ -109,3 +109,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".reply-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            const commentSlug = this.dataset.commentSlug;
+            const container = this.nextElementSibling;
+
+            if (container.querySelector("form")) {
+                container.innerHTML = "";
+                return;
+            }
+
+            const form = document.createElement("form");
+            form.method = "post";
+            form.action = "{% url 'add_comment' video.slug %}";
+            form.classList.add("mb-2");
+
+            form.innerHTML = `
+                {% csrf_token %}
+                <input type="hidden" name="reply_to_slug" value="${commentSlug}">
+                <div class="form-group">
+                    <textarea name="text" rows="2" class="form-control" placeholder="Write a reply..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary mt-1">Reply</button>
+            `;
+            container.appendChild(form);
+        });
+    });
+});

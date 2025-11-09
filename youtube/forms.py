@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from youtube.models import Video, PlayList
+from youtube.models import Video, PlayList, CommentsVideo
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Username",
@@ -81,4 +81,20 @@ class PlayListForm(forms.ModelForm):
     class Meta:
         model = PlayList
         fields = ["name", "access"]
+
+class ComentVideoForm(forms.ModelForm):
+    reply_to_slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+
+    class Meta:
+        model = CommentsVideo
+        fields = ["text"]
+        widgets = {
+            "text": forms.Textarea(attrs={
+                "class": "form-control",
+                "placeholder": "Add comment",
+                "rows": 3
+            })
+        }
+
 

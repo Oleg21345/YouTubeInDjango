@@ -1,15 +1,32 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, DetailView, UpdateView, CreateView
-from django.db.models import F
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.db.models import F, Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from youtube.models import Video, WatchLater, LikesVideo, PlayList
-from youtube.forms import VideoCreateForm, VideoUpdateForm,UpdateOnlyPhoto, PlayListForm
+from django.urls import reverse, reverse_lazy
+from youtube.models import Video, WatchLater, LikesVideo, PlayList, CommentsVideo, Autor, VoteForComment
+from youtube.forms import VideoCreateForm, VideoUpdateForm,UpdateOnlyPhoto, PlayListForm, ComentVideoForm
 from youtube.s3.s3_views import main, delete_s3_file
 from youtube.s3.data_compresor import compress_photo, compresor_video_in_memory, compress_existing_videos,ffmpeg_url
 from youtube.s3.validate_photo import validate_image_size
 import io
+
+
+def get_subscription_status(user, video):
+
+    if not hasattr(user, "autor"):
+        return None
+
+    user_autor = user.autor
+
+    if user_autor == video.autor:
+        return "owner"
+
+    if video.autor in user_autor.subscriptions.all():
+        return "subscribed"
+
+    return "not_subscribed"
+
 
 class Home(ListView):
     model = Video
@@ -20,6 +37,8 @@ class Home(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         video = Video.objects.filter(is_published=True)
+        autor = Autor.objects.get(user=self.request.user)
+        context["autor"] = autor
         context["videos"] = video
         return context
 
@@ -40,11 +59,18 @@ class VideoDetail(DetailView):
         context["like_count"] = video.votes.filter(value=1).count()
         context["dislike_count"] = video.votes.filter(value=-1).count()
 
-        context["user_vote"] = None
+        context["user_comment_votes"] = {}
         if user.is_authenticated:
+            votes = VoteForComment.objects.filter(user=user, comment__video=video)
+            context["user_comment_votes"] = {vote.comment.id: vote.value for vote in votes}
+
             vote = video.votes.filter(user=user).first()
-            if vote:
-                context["user_vote"] = vote.value
+            context["user_vote"] = vote.value if vote else None
+        else:
+            context["user_vote"] = None
+
+        context["form_comm"] = ComentVideoForm()
+        context["subscription_status"] = get_subscription_status(user, video)
 
         return context
 
@@ -85,8 +111,6 @@ class EditPhoto(UpdateView):
         messages.success(self.request, "Photo successfully updated!")
         return redirect("video_detail", slug=video.slug)
 
-
-
 class WatchLaterList(ListView):
     model = WatchLater
     context_object_name = "videos"
@@ -97,7 +121,44 @@ class LikeVideoList(ListView):
     context_object_name = "videos"
     template_name = "movies/likes_video.html"
 
+class CommentUpdate(UpdateView):
+    model = CommentsVideo
+    form_class = ComentVideoForm
+    template_name = "movies/video_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["video"] = self.object.video
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("video_detail", kwargs={"slug": self.object.video.slug})
+
+class CommentDelete(DeleteView):
+    model = CommentsVideo
+    success_url = reverse_lazy("post_detail")
+    context_object_name = "comment"
+    template_name = "movies/comment_confirm_delete.html"
+    extra_context = {"title": "Delete comment"}
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next")
+        if next_url:
+            return next_url
+        return reverse_lazy("video_detail", kwargs={"slug": self.object.video.slug})
+
+class SearchResults(ListView):
+    model = Video
+    template_name = "movies/search_results.html"
+    context_object_name = "videos"
+
+    def get_queryset(self):
+        word = self.request.GET.get("q")
+        if word:
+            return Video.objects.filter(
+                Q(title__icontains=word) | Q(desc__icontains=word)
+            )
+        return Video.objects.none()
 
 def create_video(request):
     if request.method == "POST":
@@ -230,3 +291,36 @@ def add_from_play_list(request, play_list_slug, video_slug):
     messages.success(request, f"Video '{video.title}' removed from playlist {playlist.name}")
 
     return redirect("home")
+
+
+def add_comment(request, slug, parent_slug=None):
+    video = get_object_or_404(Video, slug=slug)
+    top_comments = video.commentsvideo_set.filter(reply_to_comment__isnull=True)
+
+    if request.method == "POST":
+        form = ComentVideoForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.video = video
+
+            parent_slug_post = form.cleaned_data.get("reply_to_slug")
+            if parent_slug_post:
+                parent_comment = get_object_or_404(CommentsVideo, slug=parent_slug_post)
+                comment.reply_to_comment = parent_comment
+
+            comment.save()
+            messages.success(request, "Comment added successfully!")
+            return redirect("video_detail", slug=video.slug)
+    else:
+        form = ComentVideoForm(initial={"reply_to_slug": parent_slug})
+
+    context = {
+        "video": video,
+        "form_comm": form,
+        "parent_slug": parent_slug
+    }
+
+    return render(request, "movies/video_detail.html", context)
+
+

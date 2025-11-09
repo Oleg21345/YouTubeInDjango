@@ -10,6 +10,7 @@
     <div class="channel-avatar">{{ autor.user.username|first|upper }}</div>
     <div class="channel-name">{{ autor.user.username }}</div>
     <div class="channel-handle">@{{ autor.user.username|lower }}</div>
+    <div class="channel-handle">Subscribers: {{ autor.subscriber_count }}</div>
 
     {% if request.user == autor.user %}
     <div class="channel-buttons mt-3">

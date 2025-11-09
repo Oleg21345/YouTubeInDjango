@@ -2,8 +2,9 @@ from django.urls import path
 from youtube.views.views import *
 from youtube.views.profile_view import *
 from youtube.views.registration_view import *
+from youtube.views.subcrib_view import *
 from youtube.s3.decode_file import stream_video
-from youtube.views.dislike_like_views import like_video, dislike_video, post_vote
+from youtube.views.dislike_like_views import *
 from youtube.views.notificate_views import notificated_view
 
 urlpatterns = [
@@ -16,6 +17,10 @@ urlpatterns = [
     path("liked_video_list/<slug:slug>/", LikeVideoList.as_view(), name="likes_list"),
     path("update/<slug:slug>/", EditText.as_view(), name="edit_video"),
     path("update/<slug:slug>/photo/", EditPhoto.as_view(), name="edit_only_photo"),
+    path("update/<slug:slug>/comment", CommentUpdate.as_view(), name="comment_update"),
+    path("delete/<slug:slug>/comment", CommentDelete.as_view(), name="comment_delete"),
+    path("subs/<slug:slug>/", Subs.as_view(), name="subs"),
+    path("search/", SearchResults.as_view(), name="search"),
 
     # path("createvideo/", CreateView.as_view(), name="createvideo"),
 
@@ -35,6 +40,12 @@ urlpatterns = [
     path("delete_video_playlist/<slug:play_list_slug>/<slug:video_slug>/", delete_from_play_list, name="delete_from_play_list"),
     path("add_from_play_list/<slug:play_list_slug>/<slug:video_slug>/", add_from_play_list,
          name="add_from_play_list"),
+    path("add_comment/<slug:slug>/", add_comment, name="add_comment"),
+    path("add_subscribers/<int:autor_pk>/", add_subscribers, name="add_subscribers"),
+    path("remove_subscribers/<int:autor_pk>/", remove_subscribers, name="remove_subscribers"),
+    path("comment/<int:comment_id>/vote/<str:value>/", comment_vote, name="comment_vote"),
+    path("comment/<int:comment_id>/like/", comment_like, name="comment_like"),
+    path("comment/<int:comment_id>/dislike/", comment_dislike, name="comment_dislike"),
 
 ]
 

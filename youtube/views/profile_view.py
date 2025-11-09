@@ -10,9 +10,7 @@ class Profile(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         slug = self.kwargs["slug"]
-        print(f"DEBUG slug {slug}")
         video = Video.objects.filter(autor__autor__slug=slug)
-        print(f"DEBUG video {video}")
         context["videos"] = video
         context["videos_count"] = context["videos"].count()
 

@@ -1,0 +1,43 @@
+{% extends 'movies/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Search results:</h3>
+    {% if videos %}
+    <div class="row">
+        {% for video in videos %}
+        <div class="col-md-4 mb-3">
+            <div class="card position-relative">
+                <a href="{% url 'video_detail' video.slug %}">
+                    <img src="{{ video.url_photo }}" class="card-img-top" alt="{{ video.title }}">
+                </a>
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                    <p class="card-text">{{ video.desc|truncatewords:20 }}</p>
+                    <a href="{% url 'video_detail' video.slug %}" class="btn btn-sm btn-primary">Watch</a>
+                </div>
+
+                <div class="position-absolute" style="bottom: 10px; right: 10px;">
+                    {% include "movies/component/dropdown.html" %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No results found 😢</p>
+    {% endif %}
+</div>
+{% include "movies/component/playlist.html" %}
+<script src="{% static 'js/share_video.js' %}"></script>
+<script src="{% static 'js/add_playlist_modal.js' %}"></script>
+
+
+{% endblock %}

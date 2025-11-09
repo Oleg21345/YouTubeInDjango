@@ -1,0 +1,49 @@
+<div class="dropdown">
+    <a class="nav-link dropdown-toggle video-menu-btn" href="#" role="button"
+       id="videoMenu-{{ video.slug }}"
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <span style="font-size: 1.2rem;">⋮</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="videoMenu-{{ video.slug }}"
+        style="min-width: 200px;">
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url 'watch_later' video.slug %}">
+                <i class="bi bi-clock me-2"></i> Watch later
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center open-playlist-modal"
+               href="#"
+               data-url="{% url 'add_play_list' video.slug %}">
+                <i class="bi bi-music-note-list me-2"></i> Add to playlist
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-download me-2"></i> Download
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center share-btn"
+               href="#"
+               data-url="{{ request.build_absolute_uri|slice:':-1' }}{% url 'video_detail' video.slug %}">
+                <i class="bi bi-share me-2"></i> Share
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-x-circle me-2"></i> Not interested
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-hand-thumbs-down me-2"></i> Do not recommend
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-flag me-2"></i> Complain
+            </a>
+        </li>
+    </ul>
+</div>
